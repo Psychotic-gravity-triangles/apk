@@ -46,6 +46,10 @@ class MainActivity : Activity() {
         } else {
             Log.d(TAG, "BLE is supported")
         }
+
+        val mainView = MainView(this)
+        App.Companion.getNavigationController()!!.setInitView(this@MainActivity, mainView)
+        setContentView(mainView)
     }
 
     override fun onResume() {
