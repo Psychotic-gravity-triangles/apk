@@ -121,7 +121,8 @@ class MainActivity : Activity() {
             Log.d(TAG, result.toString())
             val btDevice = result.device
             Log.d(TAG, "onScanResult(): device discovered - $btDevice ${btDevice.name}")
-            if (btDevice.name.equals("Blink")) {
+            if (btDevice.name != null && btDevice.name.equals("Blink")) {
+                Log.d(TAG, "BLINK device is detected!!!")
                 connectToDevice(btDevice)
             }
         }
