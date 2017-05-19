@@ -14,6 +14,7 @@ import android.bluetooth.le.ScanSettings
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGatt
+import trikita.jedux.Action
 
 class MainActivity : Activity() {
 
@@ -95,7 +96,7 @@ class MainActivity : Activity() {
         mScanFilters = ArrayList<ScanFilter>()
     }
 
-    private fun scanLeDevice(enable: Boolean) {
+    fun scanLeDevice(enable: Boolean) {
         Log.d(TAG, "scanLeDevice(): $enable")
         if (enable) {
             // Stops scanning after a pre-defined scan period.
@@ -124,6 +125,7 @@ class MainActivity : Activity() {
             if (btDevice.name != null && btDevice.name.equals("Blink")) {
                 Log.d(TAG, "BLINK device is detected!!!")
                 connectToDevice(btDevice)
+                App.Companion.dispatch(Action(Actions.SET_DEVICE, btDevice))
             }
         }
 
