@@ -183,7 +183,6 @@ class MainActivity : Activity() {
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             val services = gatt.services
             Log.d(TAG, "onServiceDiscovered(): $services")
-            gatt.readCharacteristic(services[1].characteristics[0])
             for (s in services) {
                 Log.d(TAG, "--> ${s.uuid}")
                 for (c in s.characteristics) {
@@ -191,6 +190,7 @@ class MainActivity : Activity() {
                 }
                 Log.d(TAG, "---")
             }
+//            gatt.readCharacteristic(services[2].characteristics[0])
         }
 
         override fun onCharacteristicRead(gatt: BluetoothGatt,
