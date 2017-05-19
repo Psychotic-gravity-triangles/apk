@@ -59,28 +59,28 @@ class MainView(context: Context): RenderableView(context) {
                 size(0, dip(60))
                 weight(1f)
                 text("RED")
-                onClick {
-
-                }
+                onClick { (context as MainActivity).writeToDevice(1, 0, 0, 0) }
             }
 
             button {
                 size(0, dip(60))
                 weight(1f)
                 text("GREEN")
-                onClick {
-
-                }
+                onClick { (context as MainActivity).writeToDevice(0, 1, 0, 0) }
             }
 
             button {
                 size(0, dip(60))
                 weight(1f)
                 text("BLUE")
-                onClick {
-
-                }
+                onClick { (context as MainActivity).writeToDevice(0, 0, 1, 16) }
             }
+        }
+        button {
+            size(FILL, dip(60))
+            margin(0, dip(10))
+            text("OFF")
+            onClick { (context as MainActivity).writeToDevice(0, 0, 0, 0) }
         }
     }
 }
