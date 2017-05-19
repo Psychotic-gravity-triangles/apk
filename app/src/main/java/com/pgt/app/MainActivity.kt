@@ -77,6 +77,7 @@ class MainActivity : Activity() {
         if (mGatt == null) {
             return
         }
+        mGatt!!.disconnect()
         mGatt!!.close()
         mGatt = null
         super.onDestroy()
