@@ -153,6 +153,20 @@ class MainActivity : Activity() {
         }
     }
 
+    fun writeToDevice(b0: Int, b1: Int, b2: Int, b3: Int) {
+        if (mGatt != null) {
+            val characteristic = mGatt!!.services[2].characteristics[0]
+            val bytes = ByteArray(4)
+            bytes[0] = b0.toByte()
+            bytes[1] = b1.toByte()
+            bytes[2] = b2.toByte()
+            bytes[3] = b3.toByte()
+            characteristic.value = bytes
+            val status = mGatt!!.writeCharacteristic(characteristic)
+            Log.d(TAG, "writeToDevice(): writing status $status")
+        }
+    }
+
     private val mGattCallback: BluetoothGattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
             Log.d(TAG, "onConnectionStateChange(): status $status newState $newState")
@@ -175,7 +189,12 @@ class MainActivity : Activity() {
         override fun onCharacteristicRead(gatt: BluetoothGatt,
                                           characteristic: BluetoothGattCharacteristic, status: Int) {
             Log.d(TAG, "onCharacteristicRead(): $characteristic")
-            gatt.disconnect()
+        }
+
+        override fun onCharacteristicWrite(gatt: BluetoothGatt?,
+                                           characteristic: BluetoothGattCharacteristic?,
+                                           status: Int) {
+            Log.d(TAG, "onCharacteristicWrite(): $characteristic $status")
         }
     }
 }
