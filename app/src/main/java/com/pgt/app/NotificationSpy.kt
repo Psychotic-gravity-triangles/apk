@@ -16,14 +16,10 @@ class NotificationSpy: NotificationListenerService() {
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
-        Log.d(TAG, "onNotificationPosted")
-        Log.d(TAG, sbn.packageName)
-        Log.d(TAG, sbn.notification.category)
-        Log.d(TAG, sbn.notification.tickerText.toString())
-        Log.d(TAG, sbn.toString())
-        Log.d(TAG, sbn.notification.toString())
+        Log.d(TAG, "onNotificationPosted: " + sbn)
 
-        val msg = sbn.notification.tickerText.toString().toLowerCase()
+        val msg = sbn.notification?.tickerText?.toString()?.toLowerCase() ?: return
+
         if (msg.contains("red")) {
             BleService.Companion.writeToDevice(1, 0, 0, 16, this@NotificationSpy)
         } else if (msg.contains("green")) {
@@ -45,5 +41,6 @@ class NotificationSpy: NotificationListenerService() {
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {
         Log.d(TAG, "onNotificationRemoved")
+        BleService.Companion.writeToDevice(0, 0, 0, 0, this@NotificationSpy)
     }
 }
