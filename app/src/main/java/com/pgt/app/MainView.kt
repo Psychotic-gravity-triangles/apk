@@ -17,7 +17,7 @@ class MainView(context: Context): RenderableView(context) {
                 size(FILL, dip(60))
                 margin(0, 0, 0, dip(10))
                 text("Scan BLE devices")
-                onClick { (context as MainActivity).scanLeDevice(true) }
+                onClick { (context as MainActivity).startScanning() }
             }
 
             if (dev != null) {

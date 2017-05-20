@@ -1,6 +1,7 @@
 package com.pgt.app
 
 import android.app.Application
+import android.content.Intent
 import com.squareup.picasso.Picasso
 import trikita.anvil.Anvil
 import trikita.jedux.Action
@@ -22,6 +23,8 @@ class App : Application() {
 //            throwable.printStackTrace()
 //            System.exit(2)
 //        }
+        val intent = Intent(this@App, BleService::class.java)
+        startService(intent)
 
         val builder = Picasso.Builder(this)
         this@App.picasso = builder.build()
