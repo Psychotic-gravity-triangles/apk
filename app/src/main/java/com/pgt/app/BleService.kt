@@ -173,6 +173,7 @@ class BleService : Service() {
                 Log.d(TAG, "---")
             }
 //            gatt.readCharacteristic(services[2].characteristics[0])
+            writeToDevice(0, 1, 0, 0, this@BleService)
         }
 
         override fun onCharacteristicRead(gatt: BluetoothGatt,
