@@ -59,28 +59,28 @@ class MainView(context: Context): RenderableView(context) {
                 size(0, dip(60))
                 weight(1f)
                 text("RED")
-                onClick { (context as MainActivity).writeToDevice(1, 0, 0, 0) }
+                onClick { BleService.Companion.writeToDevice(1, 0, 0, 0, context) }
             }
 
             button {
                 size(0, dip(60))
                 weight(1f)
                 text("GREEN")
-                onClick { (context as MainActivity).writeToDevice(0, 1, 0, 0) }
+                onClick { BleService.Companion.writeToDevice(0, 1, 0, 0, context) }
             }
 
             button {
                 size(0, dip(60))
                 weight(1f)
                 text("BLUE")
-                onClick { (context as MainActivity).writeToDevice(0, 0, 1, 16) }
+                onClick { BleService.Companion.writeToDevice(0, 0, 1, 16, context) }
             }
         }
         button {
             size(FILL, dip(60))
             margin(0, dip(10))
             text("OFF")
-            onClick { (context as MainActivity).writeToDevice(0, 0, 0, 0) }
+            onClick { BleService.Companion.writeToDevice(0, 0, 0, 0, context) }
         }
     }
 }

@@ -186,4 +186,18 @@ class BleService : Service() {
             Log.d(TAG, "onCharacteristicWrite(): $characteristic $status")
         }
     }
+
+    companion object {
+        fun writeToDevice(b0: Int, b1: Int, b2: Int, b3: Int, c: Context) {
+            val bytes = ByteArray(4)
+            bytes[0] = b0.toByte()
+            bytes[1] = b1.toByte()
+            bytes[2] = b2.toByte()
+            bytes[3] = b3.toByte()
+            val intent = Intent(c, BleService::class.java)
+            intent.action = MainActivity.SEND_COMMAND_ACTION
+            intent.putExtra("command", bytes)
+            c.startService(intent)
+        }
+    }
 }

@@ -76,16 +76,4 @@ class MainActivity : Activity() {
     fun startScanning() {
         serviceCall(START_SCANNING_ACTION)
     }
-
-    fun writeToDevice(b0: Int, b1: Int, b2: Int, b3: Int) {
-        val bytes = ByteArray(4)
-        bytes[0] = b0.toByte()
-        bytes[1] = b1.toByte()
-        bytes[2] = b2.toByte()
-        bytes[3] = b3.toByte()
-        val intent = Intent(this@MainActivity, BleService::class.java)
-        intent.action = SEND_COMMAND_ACTION
-        intent.putExtra("command", bytes)
-        startService(intent)
-    }
 }
