@@ -35,6 +35,11 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+    signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+        }
+    }
 }
 
 dependencies {
