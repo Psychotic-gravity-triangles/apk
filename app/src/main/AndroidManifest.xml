@@ -37,6 +37,12 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+
+        <receiver android:name=".AutomateReceiver">
+            <intent-filter>
+                <action android:name="com.pgt.app.RECEIVE_AUTOMATE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
