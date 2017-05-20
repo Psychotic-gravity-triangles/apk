@@ -1,18 +1,19 @@
 package com.pgt.app
 
+import android.Manifest
 import android.app.Activity
-import android.bluetooth.*
-import android.content.pm.PackageManager
-import android.os.Bundle
-import android.util.Log
+import android.app.AlertDialog
+import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
-import android.bluetooth.BluetoothAdapter
+import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Bundle
+import android.util.Log
 
 class MainActivity : Activity() {
 
     private val TAG = "BlinkActivity"
-    private val REQUEST_ENABLE_BT = 100
 
     companion object {
         val START_SCANNING_ACTION = "com.pgt.app.SCAN"
@@ -38,17 +39,26 @@ class MainActivity : Activity() {
         setContentView(mainView)
     }
 
+    private val PERMISSION_REQUEST_COARSE_LOCATION = 1
+
     override fun onResume() {
         super.onResume()
         val bm = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
 
-        // Ensures Bluetooth is available on the device and it is enabled. If not,
-        // displays a dialog requesting user permission to enable Bluetooth.
-        if (bm.adapter == null || !bm.adapter!!.isEnabled) {
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
-        } else {
-            serviceCall(START_SCANNING_ACTION)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                val builder = AlertDialog.Builder(this@MainActivity).
+                        setTitle("This app needs location access").
+                        setMessage("Please grant location access so this app can detect Blink device").
+                        setPositiveButton(android.R.string.ok, null).
+                        setOnDismissListener { dialog ->
+                            requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), PERMISSION_REQUEST_COARSE_LOCATION)
+                        }
+                builder.show()
+            } else {
+                println("BLE permissions are already granted, start scanning")
+                serviceCall(START_SCANNING_ACTION)
+            }
         }
     }
 
@@ -56,6 +66,18 @@ class MainActivity : Activity() {
         Log.d(TAG, "onDestroy()")
         serviceCall(DISCONNECT_ACTION)
         super.onDestroy()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?) {
+        when (requestCode) {
+            PERMISSION_REQUEST_COARSE_LOCATION -> {
+                if (grantResults!![0] == PackageManager.PERMISSION_GRANTED) {
+                    println("BLE permissions are granted by the user, start scanning")
+                    serviceCall(START_SCANNING_ACTION)
+                }
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -67,7 +89,7 @@ class MainActivity : Activity() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun serviceCall(action: String) {
+    fun serviceCall(action: String) {
         val intent = Intent(this@MainActivity, BleService::class.java)
         intent.action = action
         startService(intent)
