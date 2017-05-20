@@ -1,9 +1,11 @@
 package com.pgt.app
 
 import android.content.Context
+import android.widget.CompoundButton
 import android.widget.LinearLayout
 import trikita.anvil.RenderableView
 import trikita.anvil.DSL.*
+import trikita.jedux.Action
 
 class MainView(context: Context): RenderableView(context) {
     override fun view() {
@@ -18,6 +20,16 @@ class MainView(context: Context): RenderableView(context) {
                 margin(0, 0, 0, dip(10))
                 text("Scan BLE devices")
                 onClick { (context as MainActivity).startScanning() }
+            }
+
+            checkBox {
+                size(WRAP, WRAP)
+                text("Send SMS once connection established")
+                textSize(sip(18f))
+                checked(App.Companion.state().sendSms)
+                onCheckedChange { _: CompoundButton?, b: Boolean ->
+                    App.Companion.dispatch(Action(Actions.SET_SEND_SMS, b))
+                }
             }
 
             if (dev != null) {
