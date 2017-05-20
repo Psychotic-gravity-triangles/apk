@@ -11,10 +11,18 @@ import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import trikita.jedux.Action
+import android.content.IntentFilter
+import android.app.Activity
+import android.content.BroadcastReceiver
+import android.app.PendingIntent
+import android.telephony.SmsManager
 
 class BleService : Service() {
 
     val TAG = "BleService"
+
+    private val PHONE_NUMBER = "+4915782278060"
+    private val SMS_TEXT = "On my way"
 
     private val  mBinder: IBinder = BleBinder()
 
@@ -23,9 +31,6 @@ class BleService : Service() {
     inner class BleBinder : Binder() {
         fun getService() : BleService { return this@BleService }
     }
-
-    // Stops scanning after 10 seconds.
-    private val SCAN_PERIOD: Long = 10000
 
     private var mScanning: Boolean = false
 
@@ -174,6 +179,12 @@ class BleService : Service() {
             }
 //            gatt.readCharacteristic(services[2].characteristics[0])
             writeToDevice(0, 1, 0, 0, this@BleService)
+            if (App.Companion.state().sendSms) {
+                Log.d(TAG, "---> App is going to send SMS")
+                sendSMS(PHONE_NUMBER, SMS_TEXT)
+            } else {
+                Log.d(TAG, "---> No SMS is required to be sent")
+            }
         }
 
         override fun onCharacteristicRead(gatt: BluetoothGatt,
@@ -186,6 +197,42 @@ class BleService : Service() {
                                            status: Int) {
             Log.d(TAG, "onCharacteristicWrite(): $characteristic $status")
         }
+    }
+
+    // --- Sends an SMS message to another device --- //
+    private fun sendSMS(phoneNumber: String, message: String) {
+        Log.d(TAG, "sendSMS(): to $phoneNumber what $message")
+        val SENT = "SMS_SENT"
+        val DELIVERED = "SMS_DELIVERED"
+
+        val sentPI = PendingIntent.getBroadcast(this, 0, Intent(SENT), 0)
+        val deliveredPI = PendingIntent.getBroadcast(this, 0, Intent(DELIVERED), 0)
+
+        // when the SMS has been sent
+        registerReceiver(object : BroadcastReceiver() {
+            override fun onReceive(arg0: Context, arg1: Intent) {
+                when (resultCode) {
+                    Activity.RESULT_OK -> Log.d(TAG, "SMS sent")
+                    SmsManager.RESULT_ERROR_GENERIC_FAILURE -> Log.d(TAG, "Generic failure while sending SMS")
+                    SmsManager.RESULT_ERROR_NO_SERVICE -> Log.d(TAG, "No SMS service")
+                    SmsManager.RESULT_ERROR_NULL_PDU -> Log.d(TAG, "Null PDU")
+                    SmsManager.RESULT_ERROR_RADIO_OFF -> Log.d(TAG, "Radio off")
+                }
+            }
+        }, IntentFilter(SENT))
+
+        // when the SMS has been delivered
+        registerReceiver(object : BroadcastReceiver() {
+            override fun onReceive(arg0: Context, arg1: Intent) {
+                when (resultCode) {
+                    Activity.RESULT_OK -> Log.d(TAG, "SMS delivered")
+                    Activity.RESULT_CANCELED -> Log.d(TAG, "SMS not delivered")
+                }
+            }
+        }, IntentFilter(DELIVERED))
+
+        val sms = SmsManager.getDefault()
+        sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI)
     }
 
     companion object {
