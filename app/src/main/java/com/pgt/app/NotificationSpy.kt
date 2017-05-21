@@ -19,6 +19,7 @@ class NotificationSpy: NotificationListenerService() {
         Log.d(TAG, "onNotificationPosted: " + sbn)
 
         val msg = sbn.notification?.tickerText?.toString()?.toLowerCase() ?: return
+        Log.d(TAG, "onNotificationPosted: msg $msg")
 
         if (msg.contains("red")) {
             BleService.Companion.writeToDevice(1, 0, 0, 16, this@NotificationSpy)
@@ -37,6 +38,8 @@ class NotificationSpy: NotificationListenerService() {
         } else if (msg.contains("black") || msg.contains("off")) {
             BleService.Companion.writeToDevice(0, 0, 0, 0, this@NotificationSpy)
         }
+
+        cancelAllNotifications()
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {

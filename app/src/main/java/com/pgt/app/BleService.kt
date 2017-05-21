@@ -237,6 +237,7 @@ class BleService : Service() {
 
     companion object {
         fun writeToDevice(b0: Int, b1: Int, b2: Int, b3: Int, c: Context) {
+            Log.d("COMMAND", "writeToDevice()")
             val bytes = ByteArray(4)
             bytes[0] = b0.toByte()
             bytes[1] = b1.toByte()
